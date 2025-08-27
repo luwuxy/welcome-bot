@@ -15,7 +15,7 @@ module.exports = {
             .setDescription('Before you start talking, be sure to check out the <#1405387046649991251> and introduce yourself in <#1405387163687977071>!')
             .setImage('https://c.tenor.com/ovJxRSyjPQEAAAAC/tenor.gif');
 
-        await member.guild.channels.fetch('1406584997724422164')
+        await member.guild.channels.fetch('1405931638415818783')
             .then(channel => {
                 channel.send({
                     content: `<@${member.id}>`,
