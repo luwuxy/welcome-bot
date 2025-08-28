@@ -19,10 +19,18 @@ module.exports = {
                 text: `User ID: ${message.author.id}`
             });
 
-        await message.client.channels.fetch(process.env.MODMAIL_ID)
-            .then((channel) => channel.send({
-                embeds: [embed]
-            }));
-        message.react('✅');
+        try {
+            const channel = await message.client.channels.fetch(process.env.MODMAIL_ID);
+            await channel.send({ embeds: [embed] });
+            message.react('✅');
+        } catch (e) {
+            console.error('Failed to forward modmail:', e);
+            await message.react('❌');
+            message.channel.send('❌ Failed to forward modmail! An error log has been reported to the developer.')
+                .then(msg => {
+                    setTimeout(() => msg.delete(), 5000);
+                })
+                .catch(console.error);
+        }
     },
 };
