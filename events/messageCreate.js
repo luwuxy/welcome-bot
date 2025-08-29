@@ -7,7 +7,7 @@ module.exports = {
         if (message.author.bot) return;
         if (message.guild) return;
 
-        let cachedUsers
+        let cachedUsers;
 
         const channel = message.client.modmailChannel;
         if (!channel) return console.error('Modmail channel not available.');
@@ -25,11 +25,19 @@ module.exports = {
                 name: message.author.tag,
                 iconURL: message.author.displayAvatarURL()
             })
-            .setDescription(message.content)
             .setTimestamp()
             .setFooter({
                 text: `User ID: ${message.author.id}`
             });
+        
+        if (message.content === '' && message.attachments.size > 0) {
+            await message.react('❌');
+            await message.channel.send("❌ Images are not supported yet! Message was not sent.");
+            return;
+        } else {
+            embed.setDescription(message.content);
+            await message.channel.send("❌ Images are not supported yet! Image was not sent.");
+        }
 
         try {
             await channel.send({ embeds: [embed] });
@@ -42,7 +50,7 @@ module.exports = {
                         return;
                     }
                     console.log('File written successfully!');
-                });
+                })
             }
         } catch (e) {
             console.error('Failed to forward modmail:', e);
