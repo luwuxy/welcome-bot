@@ -29,18 +29,38 @@ module.exports = {
             .setFooter({
                 text: `User ID: ${message.author.id}`
             });
-        
-        if (message.content === '' && message.attachments.size > 0) {
-            await message.react('❌');
-            await message.channel.send("❌ Images are not supported yet! Message was not sent.");
-            return;
-        } else {
-            embed.setDescription(message.content);
-        }
 
         try {
-            await channel.send({ embeds: [embed] });
+            if (message.content) {
+                embed.setDescription(message.content);
+            }
+
+            if (message.attachments.size > 0) {
+                const embeds = [embed];
+
+                const firstImage = message.attachments.first();
+                if (firstImage.contentType.startsWith("image/")) {
+                    embed.setImage(firstImage.url);
+                }
+
+                message.attachments.each(file => {
+                    if (file.id === firstImage.id) return;
+                    if (!file.contentType || !file.contentType.startsWith("image/")) return;
+                    const embedImage = new EmbedBuilder()
+                        .setColor('Orange')
+                        .setImage(file.url)
+                        .setTimestamp()
+                        .setFooter({
+                            text: `User ID: ${message.author.id}`
+                        });
+                    embeds.push(embedImage);
+                })
+                await channel.send({ embeds: embeds });
+            } else {
+                await channel.send({ embeds: [embed] });
+            }
             await message.react('✅');
+
             if (!cachedUsers.includes(message.author.id)) {
                 cachedUsers.push(message.author.id);
                 fs.writeFile("cachedUsers.json", JSON.stringify(cachedUsers), (err) => {
