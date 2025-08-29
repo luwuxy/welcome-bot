@@ -1,10 +1,22 @@
 const { Events, EmbedBuilder } = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
         if (message.guild) return;
+
+        let cachedUsers
+
+        const channel = message.client.modmailChannel;
+        if (!channel) return console.error('Modmail channel not available.');
+
+        try {
+            cachedUsers = JSON.parse(fs.readFileSync("cachedUsers.json", 'utf-8'));
+        } catch (e) {
+            cachedUsers = [];
+        }
 
         const embed = new EmbedBuilder()
             .setColor('Orange')
@@ -20,13 +32,22 @@ module.exports = {
             });
 
         try {
-            const channel = await message.client.channels.fetch(process.env.MODMAIL_ID);
             await channel.send({ embeds: [embed] });
-            message.react('✅');
+            await message.react('✅');
+            if (!cachedUsers.includes(message.author.id)) {
+                cachedUsers.push(message.author.id);
+                fs.writeFile("cachedUsers.json", JSON.stringify(cachedUsers), (err) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    console.log('File written successfully!');
+                });
+            }
         } catch (e) {
             console.error('Failed to forward modmail:', e);
             await message.react('❌');
-            message.channel.send('❌ Failed to forward modmail! An error log has been reported to the developer.')
+            await message.channel.send('❌ Failed to forward modmail! An error log has been reported to the developer.')
                 .then(msg => {
                     setTimeout(() => msg.delete(), 5000);
                 })
