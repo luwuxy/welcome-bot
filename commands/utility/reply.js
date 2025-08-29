@@ -35,7 +35,7 @@ module.exports = {
             cachedUsers = [];
         }
 
-        if (!cachedUsers.includes(interaction.user.id)) {
+        if (!cachedUsers.includes(user.id)) {
             interaction.reply({
                 content: "This user has not used modmail!",
                 flags: MessageFlags.Ephemeral
