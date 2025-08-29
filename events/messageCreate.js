@@ -36,7 +36,6 @@ module.exports = {
             return;
         } else {
             embed.setDescription(message.content);
-            await message.channel.send("❌ Images are not supported yet! Image was not sent.");
         }
 
         try {
