@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: Events.GuildMemberUpdate,
     async execute(oldMember, newMember) {
-        if (oldMember.pending && !newMember.pending) {
+        if (oldMember.pending === true && newMember.pending === false) {
             const channel = member.client.modmailWelcome;
 
             const welcomeEmbed = new EmbedBuilder()
