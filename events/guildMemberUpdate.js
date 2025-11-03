@@ -2,8 +2,10 @@ const { Events } = require('discord.js');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: Events.GuildMemberAdd,
+    name: Events.GuildMemberUpdate,
     async execute(member) {
+        if (member.pending === false) return;
+        
         const channel = member.client.modmailWelcome;
 
         const welcomeEmbed = new EmbedBuilder()
