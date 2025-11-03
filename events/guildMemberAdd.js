@@ -4,6 +4,8 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: Events.GuildMemberAdd,
     async execute(member) {
+        const channel = member.client.modmailWelcome;
+
         const welcomeEmbed = new EmbedBuilder()
             .setColor('#ffefd6')
             .setTitle(`Welcome to ${member.guild.name}!`)
@@ -15,13 +17,9 @@ module.exports = {
             .setDescription(`Before you start talking, be sure to check out the <#${process.env.CHANNEL_ID2}> and introduce yourself in <#${process.env.CHANNEL_ID3}>!`)
             .setImage('https://c.tenor.com/ovJxRSyjPQEAAAAC/tenor.gif');
 
-        await member.guild.channels.fetch(process.env.CHANNEL_ID)
-            .then(channel => {
-                channel.send({
-                    content: `<@${member.id}>`,
-                    embeds: [welcomeEmbed]
-                });
-            })
-            .catch(console.error);
+        channel.send({
+            content: `<@${member.id}>`,
+            embeds: [welcomeEmbed]
+        });
     },
 };
