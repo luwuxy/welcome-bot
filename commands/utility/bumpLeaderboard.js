@@ -30,7 +30,7 @@ module.exports = {
             members.forEach((member, i) => {
                 const key = Object.keys(bumpCount).filter(id => id !== "totalCount")[i];
                 leaderboardEmbed.addFields({
-                    name: `${i + 1}. ${member.displayName}`,
+                    name: `${i + 1}. ${member.user.username}`,
                     value: `\\- Bumps: ${bumpCount[key].userBumpCount}
                             \\- Last Bump: <t:${Math.floor(bumpCount[key].date / 1000)}:f>`
                 });
