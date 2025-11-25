@@ -1,18 +1,49 @@
 const { Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 let cachedUsers;
+let bumpCount = {};
 
 try {
-    cachedUsers = JSON.parse(fs.readFileSync("cachedUsers.json", 'utf-8'));
+    cachedUsers = JSON.parse(fs.readFileSync("cachedUsers.json", "utf-8"));
+    bumpCount = JSON.parse(fs.readFileSync("bumpCount.json", "utf-8"));
 } catch (e) {
     cachedUsers = [];
+    bumpCount.totalCount = 0;
 }
 
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
-        if (message.author.bot) return;
-        if (message.guild) return;
+        if (
+            message.author.bot &&
+            message.author.id === '302050872383242240' &&
+            message.interaction.commandName === 'bump'
+        ) {
+            console.log('The server was bumped!');
+            bumpCount.totalCount++;
+
+            if (!bumpCount[message.interaction.user.id]) {
+                bumpCount[message.interaction.user.id] = {
+                    author: message.interaction.user.username,
+                    userBumpCount: 1,
+                    date: message.createdTimestamp
+                }
+            } else {
+                bumpCount[message.interaction.user.id].author = message.interaction.user.username;
+                bumpCount[message.interaction.user.id].userBumpCount++;
+            }
+
+            fs.writeFileSync("bumpCount.json", JSON.stringify(bumpCount), (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log('File written successfully!');
+            })
+            return;
+        } else if (message.author.bot || message.guild) {
+            return;
+        }
 
         const channel = message.client.modmailChannel;
         if (!channel) return console.error('Modmail channel not available.');
