@@ -20,21 +20,23 @@ module.exports = {
                 .setColor('#ffefd6')
                 .setTitle(`Bump Leaderboard for ${interaction.guild.name}`)
                 .setFooter({ text: `Total Bumps: ${bumpCount.totalCount}` });
-            const memberPromises = Object.keys(bumpCount)
+            const rankedIds = Object.keys(bumpCount)
                 .filter(id => id !== "totalCount")
-                .slice(0, 10)
-                .map(id => interaction.guild.members.fetch(id));
+                .sort((a, b) => bumpCount[b].userBumpCount - bumpCount[a].userBumpCount) // Sort highest → lowest
+                .slice(0, 10);
 
+            const memberPromises = rankedIds.map(id => interaction.guild.members.fetch(id));
             const members = await Promise.all(memberPromises);
 
             members.forEach((member, i) => {
-                const key = Object.keys(bumpCount).filter(id => id !== "totalCount")[i];
+                const userId = rankedIds[i];
                 leaderboardEmbed.addFields({
                     name: `${i + 1}. ${member.user.username}`,
-                    value: `\\- Bumps: ${bumpCount[key].userBumpCount}
-                            \\- Last Bump: <t:${Math.floor(bumpCount[key].date / 1000)}:f>`
+                    value: `\\- Bumps: ${bumpCount[userId].userBumpCount}
+                \\- Last Bump: <t:${Math.floor(bumpCount[userId].date / 1000)}:f>`
                 });
             });
+
         } else {
             interaction.reply('No one has bumped this server yet!');
             return;
