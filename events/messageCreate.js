@@ -1,5 +1,12 @@
 const { Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
+let cachedUsers;
+
+try {
+    cachedUsers = JSON.parse(fs.readFileSync("cachedUsers.json", 'utf-8'));
+} catch (e) {
+    cachedUsers = [];
+}
 
 module.exports = {
     name: Events.MessageCreate,
@@ -7,16 +14,8 @@ module.exports = {
         if (message.author.bot) return;
         if (message.guild) return;
 
-        let cachedUsers;
-
         const channel = message.client.modmailChannel;
         if (!channel) return console.error('Modmail channel not available.');
-
-        try {
-            cachedUsers = JSON.parse(fs.readFileSync("cachedUsers.json", 'utf-8'));
-        } catch (e) {
-            cachedUsers = [];
-        }
 
         const embed = new EmbedBuilder()
             .setColor('Orange')
@@ -63,7 +62,7 @@ module.exports = {
 
             if (!cachedUsers.includes(message.author.id)) {
                 cachedUsers.push(message.author.id);
-                fs.writeFile("cachedUsers.json", JSON.stringify(cachedUsers), (err) => {
+                fs.writeFileSync("cachedUsers.json", JSON.stringify(cachedUsers), (err) => {
                     if (err) {
                         console.error(err);
                         return;
