@@ -31,6 +31,7 @@ module.exports = {
             } else {
                 bumpCount[message.interaction.user.id].author = message.interaction.user.username;
                 bumpCount[message.interaction.user.id].userBumpCount++;
+                bumpCount[message.interaction.user.id].date = message.createdTimestamp;
             }
 
             fs.writeFileSync("bumpCount.json", JSON.stringify(bumpCount), (err) => {
