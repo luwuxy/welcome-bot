@@ -11,9 +11,10 @@ module.exports = {
             client.modmailGuild = await client.guilds.fetch(process.env.GUILD_ID);
             client.modmailChannel = await client.channels.fetch(process.env.MODMAIL_ID);
             client.modmailWelcome = await client.channels.fetch(process.env.CHANNEL_ID);
-            console.log("Guild and modmail channel has been fetched!");
+            client.modmailBoost = await client.channels.fetch(process.env.BOOST_CHANNEL);
+            console.log("All channels have been fetched!");
         } catch (e) {
-            console.error("Failed to fetch modmail channel:", e);
+            console.error("A channel was not fetched! Error:", e);
         }
     },
 };
