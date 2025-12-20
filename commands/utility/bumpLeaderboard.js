@@ -31,7 +31,7 @@ module.exports = {
             members.forEach((member, i) => {
                 const userId = rankedIds[i];
                 leaderboardEmbed.addFields({
-                    name: `${i + 1}. ${member.user.username}`,
+                    name: `${i + 1}. ${bumpCount[userId].author}`,
                     value: `\\- Bumps: ${bumpCount[userId].userBumpCount}
                 \\- Last Bump: <t:${Math.floor(bumpCount[userId].date / 1000)}:f>`
                 });
