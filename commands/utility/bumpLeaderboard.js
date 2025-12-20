@@ -22,14 +22,10 @@ module.exports = {
                 .setFooter({ text: `Total Bumps: ${bumpCount.totalCount}` });
             const rankedIds = Object.keys(bumpCount)
                 .filter(id => id !== "totalCount")
-                .sort((a, b) => bumpCount[b].userBumpCount - bumpCount[a].userBumpCount) // Sort highest → lowest
+                .sort((a, b) => bumpCount[b].userBumpCount - bumpCount[a].userBumpCount)
                 .slice(0, 10);
 
-            const memberPromises = rankedIds.map(id => interaction.guild.members.fetch(id));
-            const members = await Promise.all(memberPromises);
-
-            members.forEach((member, i) => {
-                const userId = rankedIds[i];
+            rankedIds.forEach((userId, i) => {
                 leaderboardEmbed.addFields({
                     name: `${i + 1}. ${bumpCount[userId].author}`,
                     value: `\\- Bumps: ${bumpCount[userId].userBumpCount}
